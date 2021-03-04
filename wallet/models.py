@@ -1,3 +1,29 @@
 from django.db import models
+from django.contrib.auth.models import User
 
-# Create your models here.
+MIN_BALANCE = 100
+
+class Wallet(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    balance = models.IntegerField()
+
+    @classmethod
+    def create(cls, user):
+        wallet = cls.objects.create(user=user, balance=MIN_BALANCE)
+        wallet.save()
+        return wallet
+
+    @classmethod
+    def get(cls, user):
+        return cls.objects.get(user=user)
+
+    def get_balance(self):
+        return self.balance
+
+    def debit(self, amount):
+        self.balance -= amount
+        self.save()
+
+    def credit(self, amount):
+        self.balance += amount
+        self.save()
