@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth.models import User
 
 from .models import Wallet
+from .decorators import transaction
 
 def get_user(user_id):
     try:
@@ -24,6 +25,7 @@ def response(success=True, **kwargs):
 
 @require_POST
 @csrf_exempt
+@transaction
 def create(request, user_id):
     if user := get_user(user_id):
         if wallet := Wallet.get(user):
@@ -46,6 +48,7 @@ def balance(request, user_id):
 
 @require_POST
 @csrf_exempt
+@transaction
 def debit(request, user_id):
     amount = get_json(request).get('amount', 0)
     if user := get_user(user_id):
@@ -62,6 +65,7 @@ def debit(request, user_id):
 
 @require_POST
 @csrf_exempt
+@transaction
 def credit(request, user_id):
     amount = get_json(request).get('amount', 0)
     if user := get_user(user_id):

@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from django.conf import settings
 from django.utils import timezone
 
-MIN_BALANCE = 100
+globals = settings.GLOBALS
 
 class Wallet(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -14,9 +14,9 @@ class Wallet(models.Model):
 
     @classmethod
     def create(cls, user):
-        wallet = cls.objects.create(user=user, balance=MIN_BALANCE)
+        wallet = cls.objects.create(user=user, balance=globals['min_balance'])
         wallet.save()
-        wallet.log(f'created with {MIN_BALANCE} balance')
+        wallet.log(f"created with {globals['min_balance']} balance")
         return wallet
 
     @classmethod
@@ -30,7 +30,7 @@ class Wallet(models.Model):
         return self.balance
 
     def debit(self, amount):
-        if self.balance - amount < MIN_BALANCE:
+        if self.balance - amount < globals['min_balance']:
             self.log(f'debit transaction failed. balance less than minimum required')
             raise ValidationError('balance less than minimum required')
         self.balance -= amount

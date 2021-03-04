@@ -30,6 +30,8 @@ Responses are returned in JSON format. Each response has a _success_ field which
 
 __Note:__ all transactions create a log entry in the log file for the respective wallet. log files can be found in _logs/_ directory with format _wallet\<wallet_id\>.log_
 
-__Note:__ debit transactions fail if balance is less than minimum balance (currently set to 100. can be adjusted in _wallet/models.py_)
+__Note:__ debit transactions fail if balance is less than minimum balance (currently set to 100. can be adjusted in _server/config.py_)
 
 __Note:__ this API does not handle user creation and authentication
+
+__Note:__ only 1 create or credit or debit transaction is performed at a time for a user
