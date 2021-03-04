@@ -15,7 +15,10 @@ class Wallet(models.Model):
 
     @classmethod
     def get(cls, user):
-        return cls.objects.get(user=user)
+        try:
+            return cls.objects.get(user=user)
+        except cls.DoesNotExist:
+            return None
 
     def get_balance(self):
         return self.balance
