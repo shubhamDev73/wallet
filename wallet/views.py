@@ -50,8 +50,11 @@ def credit(request, user_id):
     amount = get_json(request).get('amount', 0)
     if user := get_user(user_id):
         if wallet := Wallet.get(user):
-            wallet.credit(amount)
-            return response(message=f'credited {amount}')
+            try:
+                wallet.credit(amount)
+                return response(message=f'credited {amount}')
+            except Exception as e:
+                return response(success=False, error='transaction not allowed', message=e.message)
         else:
             return response(success=False, error='wallet does not exist')
     else:
@@ -63,8 +66,11 @@ def debit(request, user_id):
     amount = get_json(request).get('amount', 0)
     if user := get_user(user_id):
         if wallet := Wallet.get(user):
-            wallet.debit(amount)
-            return response(message=f'debited {amount}')
+            try:
+                wallet.debit(amount)
+                return response(message=f'debited {amount}')
+            except Exception as e:
+                return response(success=False, error='transaction not allowed', message=e.message)
         else:
             return response(success=False, error='wallet does not exist')
     else:

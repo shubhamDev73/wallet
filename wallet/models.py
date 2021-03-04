@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 MIN_BALANCE = 100
 
@@ -24,6 +25,8 @@ class Wallet(models.Model):
         return self.balance
 
     def debit(self, amount):
+        if self.balance - amount < MIN_BALANCE:
+            raise ValidationError('balance less than minimum required')
         self.balance -= amount
         self.save()
 
