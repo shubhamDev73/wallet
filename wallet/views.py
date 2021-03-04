@@ -46,13 +46,13 @@ def balance(request, user_id):
 
 @require_POST
 @csrf_exempt
-def credit(request, user_id):
+def debit(request, user_id):
     amount = get_json(request).get('amount', 0)
     if user := get_user(user_id):
         if wallet := Wallet.get(user):
             try:
-                wallet.credit(amount)
-                return response(message=f'credited {amount}')
+                wallet.debit(amount)
+                return response(message=f'debited {amount}')
             except Exception as e:
                 return response(success=False, error='transaction not allowed', message=e.message)
         else:
@@ -62,13 +62,13 @@ def credit(request, user_id):
 
 @require_POST
 @csrf_exempt
-def debit(request, user_id):
+def credit(request, user_id):
     amount = get_json(request).get('amount', 0)
     if user := get_user(user_id):
         if wallet := Wallet.get(user):
             try:
-                wallet.debit(amount)
-                return response(message=f'debited {amount}')
+                wallet.credit(amount)
+                return response(message=f'credited {amount}')
             except Exception as e:
                 return response(success=False, error='transaction not allowed', message=e.message)
         else:
