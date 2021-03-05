@@ -8,6 +8,8 @@
 - Create test user `python manage.py createsuperuser`
 - Run server `python manage.py runserver`
 
+__Note:__ tests can be run using `python manage.py test`
+
 ## Structure
 
 ### API structure
