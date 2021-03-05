@@ -28,60 +28,44 @@ def response(success=True, **kwargs):
 @transaction
 def create(request, user_id):
     if user := get_user(user_id):
-        if wallet := Wallet.get(user):
-            return response(success=False, error='wallet already exists')
-        else:
-            Wallet.create(user)
+        if wallet := Wallet.create(get_user(user_id)):
             return response()
+        else:
+            return response(success=False, error='wallet already exists')
     else:
         return response(success=False, error='user does not exist')
 
 @require_GET
 def balance(request, user_id):
-    if user := get_user(user_id):
-        if wallet := Wallet.get(user):
-            return response(balance=wallet.get_balance())
-        else:
-            return response(success=False, error='wallet does not exist')
+    if wallet := Wallet.get(get_user(user_id)):
+        return response(balance=wallet.get_balance())
     else:
-        return response(success=False, error='user does not exist')
+        return response(success=False, error='wallet does not exist')
 
 @require_POST
 @csrf_exempt
 @transaction
 def debit(request, user_id):
     amount = get_json(request).get('amount')
-    if type(amount) is not int or amount <= 0:
-        return response(success=False, error='invalid amount')
-
-    if user := get_user(user_id):
-        if wallet := Wallet.get(user):
-            try:
-                wallet.debit(amount)
-                return response(message=f'debited {amount}')
-            except Exception as e:
-                return response(success=False, error='transaction not allowed', message=e.message)
-        else:
-            return response(success=False, error='wallet does not exist')
+    if wallet := Wallet.get(get_user(user_id)):
+        try:
+            wallet.debit(amount)
+            return response(message=f'debited {amount}')
+        except Exception as e:
+            return response(success=False, error='transaction not allowed', message=str(e))
     else:
-        return response(success=False, error='user does not exist')
+        return response(success=False, error='wallet does not exist')
 
 @require_POST
 @csrf_exempt
 @transaction
 def credit(request, user_id):
     amount = get_json(request).get('amount')
-    if type(amount) is not int or amount <= 0:
-        return response(success=False, error='invalid amount')
-
-    if user := get_user(user_id):
-        if wallet := Wallet.get(user):
-            try:
-                wallet.credit(amount)
-                return response(message=f'credited {amount}')
-            except Exception as e:
-                return response(success=False, error='transaction not allowed', message=e.message)
-        else:
-            return response(success=False, error='wallet does not exist')
+    if wallet := Wallet.get(get_user(user_id)):
+        try:
+            wallet.credit(amount)
+            return response(message=f'credited {amount}')
+        except Exception as e:
+            return response(success=False, error='transaction not allowed', message=str(e))
     else:
-        return response(success=False, error='user does not exist')
+        return response(success=False, error='wallet does not exist')
