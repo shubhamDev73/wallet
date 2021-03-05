@@ -1,3 +1,5 @@
+import time
+
 from django.utils.deprecation import MiddlewareMixin
 from django.conf import settings
 
@@ -10,7 +12,7 @@ class TransactionMiddleware(MiddlewareMixin):
         if getattr(view_func, 'transaction', False):
             user_id = view_kwargs['user_id']
             while user_id in globals['transactions']:
-                pass
+                time.sleep(0.01)
             globals['transactions'].add(user_id)
             data = view_func(request, *view_args, **view_kwargs)
             globals['transactions'].remove(user_id)
