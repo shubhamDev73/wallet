@@ -50,7 +50,10 @@ def balance(request, user_id):
 @csrf_exempt
 @transaction
 def debit(request, user_id):
-    amount = get_json(request).get('amount', 0)
+    amount = get_json(request).get('amount')
+    if type(amount) is not int or amount <= 0:
+        return response(success=False, error='invalid amount')
+
     if user := get_user(user_id):
         if wallet := Wallet.get(user):
             try:
@@ -67,7 +70,10 @@ def debit(request, user_id):
 @csrf_exempt
 @transaction
 def credit(request, user_id):
-    amount = get_json(request).get('amount', 0)
+    amount = get_json(request).get('amount')
+    if type(amount) is not int or amount <= 0:
+        return response(success=False, error='invalid amount')
+
     if user := get_user(user_id):
         if wallet := Wallet.get(user):
             try:
